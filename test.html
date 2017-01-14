@@ -1,0 +1,60 @@
+<script>
+// var a = "[\"test\", \"hello\", [\"world\", \"speak\", 3], [\"foo\", \"bar\", [2, 3, 4], [2, 1], \"53\"]]";
+// var b = "{ \"item\": [2, 3, { \"foo\": \"bar\", \"test\": { \"run\": [5, 4, 8] } }, { \"test\": \"yes\" } ] }";
+
+// extract(a, "0") returns "test"
+// extract(a, "3.2.0") returns 2
+
+// extract(b, "item.2.foo") returns "bar"
+
+function extract (inputString, index) {
+    var inputStringBeg = 1;
+    var outputIndex = extractRec(inputString, inputStringBeg, index);
+
+    console.log(inputString.charAt(outputIndex));
+    console.log(inputString.charAt(outputIndex+1));
+}
+
+function extractRec (inputString, inputStringBegin, index) {
+  var indexList = index.split(".");
+
+  var currentChar = inputString.charAt(inputStringBegin);
+  var nextChar = inputString.charAt(inputStringBegin+1);
+  var i = 1;
+  var commmaCounter = 0;
+
+  while(currentChar != "") {
+    if (currentChar == " " && nextChar == "[") {
+      if (commmaCounter == indexList[0]) {
+        inputStringBegin++;
+        var tempIndex = indexList.slice(1);
+        return extractRec(inputString, inputStringBegin, tempIndex.join("."));
+      } else {
+        while (currentChar != "]") {
+          inputStringBegin++;
+          i++;
+          currentChar = inputString.charAt(inputStringBegin);
+          nextChar = inputString.charAt(inputStringBegin+1);
+        }
+      }
+      
+    } else {
+      if (commmaCounter == indexList[0]) {
+        return inputStringBegin+1;
+      }
+      if (currentChar == ",") {
+        commmaCounter++;
+      }
+      inputStringBegin++;
+      i++;
+      currentChar = inputString.charAt(inputStringBegin);
+      nextChar = inputString.charAt(inputStringBegin+1);
+    }
+  }
+}
+
+extract("[\"test\", \"hello\", [\"world\", \"speak\", 3], [\"foo\", \"bar\", [2, 3, 4], [2, 1], \"53\"]]", "0");
+
+      // var inputList = inputString.match(/.*(\[.*\])*.*,/g);
+
+</script>
